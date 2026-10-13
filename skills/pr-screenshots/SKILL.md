@@ -1,6 +1,7 @@
 ---
 name: pr-screenshots
 description: Capture screenshots of the Sentry UI in a web browser, lay them out in a pull request description as before/after tables, and upload them with `gh --attach`.
+when_to_use: When a pull request intentionally modifies the frontend such that users would see a difference.
 ---
 
 # PR Screenshots
