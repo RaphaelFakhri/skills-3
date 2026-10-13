@@ -17,7 +17,7 @@ callers and consumers. Then add the states the change affects at each of them,
 such as loading, error, empty, hover, selected, menu open, expanded, scrolled,
 narrow viewport, and light or dark theme.
 
-Each location and state gets its own row. Never group surfaces into one row:
+Never group surfaces into one row: for example,
 "GridEditable, as in Discover, dashboards and insights" is three rows.
 
 ## Step 2: Capture From the Real Product
