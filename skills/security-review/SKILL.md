@@ -96,6 +96,7 @@ What type of code am I reviewing?
 | Code Type | Load These References |
 |-----------|----------------------|
 | API endpoints, routes | `authorization.md`, `authentication.md`, `injection.md` |
+| Django/DRF views, permission classes, object-level access | Use the `django-access-review` skill if available for access control; otherwise `authorization.md` |
 | Frontend, templates | `xss.md`, `csrf.md` |
 | File handling, uploads | `file-security.md` |
 | Crypto, secrets, tokens | `cryptography.md`, `data-protection.md` |

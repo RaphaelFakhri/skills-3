@@ -19,7 +19,7 @@ In scope:
 Out of scope:
 
 - GitHub Actions workflow exploitation; that belongs to the `gha-security-review` skill.
-- Django access-control review of permission classes and endpoint scopes; that belongs to the `django-access-review` skill.
+- In-depth Django access-control review of permission classes and endpoint scopes; `SKILL.md` routes that to the `django-access-review` skill when it is available and falls back to `references/authorization.md` when it is not.
 - Kubernetes, Terraform, and cloud IAM configuration review. No bundled guides exist; do not reference them from `SKILL.md` until they are written.
 - Dedicated Go, Rust, Java, or other language guides. The agent falls back to the language-agnostic `references/` files.
 - Reporting low-confidence, defense-in-depth, or style-level findings.
