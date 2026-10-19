@@ -107,6 +107,7 @@ What type of code am I reviewing?
 | CI/CD, dependencies | `supply-chain.md` |
 | Error handling | `error-handling.md` |
 | Audit, logging | `logging.md` |
+| Object merging/cloning, `__proto__`, WebSocket handlers, LLM prompt construction | `modern-threats.md` |
 
 ### 2. Load Language Guide
 
@@ -116,19 +117,16 @@ Based on file extension or imports:
 |------------|-------|
 | `.py`, `django`, `flask`, `fastapi` | `languages/python.md` |
 | `.js`, `.ts`, `express`, `react`, `vue`, `next` | `languages/javascript.md` |
-| `.go`, `go.mod` | `languages/go.md` |
-| `.rs`, `Cargo.toml` | `languages/rust.md` |
-| `.java`, `spring`, `@Controller` | `languages/java.md` |
+
+For other languages there is no dedicated guide; rely on the `references/` files and verify framework protections directly in the codebase.
 
 ### 3. Load Infrastructure Guide (if applicable)
 
 | File Type | Guide |
 |-----------|-------|
 | `Dockerfile`, `.dockerignore` | `infrastructure/docker.md` |
-| K8s manifests, Helm charts | `infrastructure/kubernetes.md` |
-| `.tf`, Terraform | `infrastructure/terraform.md` |
-| GitHub Actions, `.gitlab-ci.yml` | `infrastructure/ci-cd.md` |
-| AWS/GCP/Azure configs, IAM | `infrastructure/cloud.md` |
+| GitHub Actions workflows | Use the `gha-security-review` skill if available; otherwise `references/supply-chain.md` |
+| Other CI/CD pipelines, lockfiles, package manifests | `references/supply-chain.md` |
 
 ### 4. Research Before Flagging
 
@@ -300,13 +298,6 @@ If no vulnerabilities found, state: "No high-confidence vulnerabilities identifi
 ### Language Guides (`languages/`)
 - `python.md` - Django, Flask, FastAPI patterns
 - `javascript.md` - Node, Express, React, Vue, Next.js
-- `go.md` - Go-specific security patterns
-- `rust.md` - Rust unsafe blocks, FFI security
-- `java.md` - Spring, Java EE patterns
 
 ### Infrastructure (`infrastructure/`)
 - `docker.md` - Container security
-- `kubernetes.md` - K8s RBAC, secrets, policies
-- `terraform.md` - IaC security
-- `ci-cd.md` - Pipeline security
-- `cloud.md` - AWS/GCP/Azure security
