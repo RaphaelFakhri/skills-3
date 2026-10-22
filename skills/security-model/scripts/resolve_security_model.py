@@ -324,6 +324,8 @@ class Source:
 
     def _check_token(self, token: str, base: str, file_set: set[str]) -> tuple[str | None, bool]:
         token = token.strip()
+        # Qualified names (`CacheKey::from_scoped_file`) are checked like dotted ones.
+        token = re.sub(r"(?<=\w)::(?=\w)", ".", token)
         if _SKIP_TOKEN.search(token) or _INV_ID.match(token) or len(token) < 3:
             return None, True
         token = re.sub(r"\(.*\)$", "", token)

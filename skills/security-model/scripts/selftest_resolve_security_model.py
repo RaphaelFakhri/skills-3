@@ -196,3 +196,10 @@ def test_check_follows_tracked_directory_symlink(repo: Path) -> None:
     (repo / "SECURITY_MODEL.md").write_text("`alias/v1/handler.py` and `alias/missing.py`\n")
     out = run("check", "--repo", str(repo))
     assert [line.split("`")[1] for line in out.stdout.splitlines()] == ["alias/missing.py"]
+
+
+def test_check_validates_qualified_symbols(repo: Path) -> None:
+    (repo / "src/api/v1/handler.py").write_text("class CacheKey:\n    def from_scoped_file(self): ...\n")
+    (repo / "SECURITY_MODEL.md").write_text("`CacheKey::from_scoped_file` and `CacheKey::no_such_fn()`\n")
+    out = run("check", "--repo", str(repo))
+    assert [line.split("`")[1] for line in out.stdout.splitlines()] == ["CacheKey::no_such_fn()"]

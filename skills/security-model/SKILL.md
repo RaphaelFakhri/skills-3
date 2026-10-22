@@ -66,7 +66,7 @@ For new guidance, use `<repo_root>/SECURITY_MODEL.md` for the repository or `<co
 
 ## 2. Establish the Security Boundary
 
-**Settle exposure first.** Before drafting anything about severity, find out who can reach the system: from the internet, from other internal services only, from customer applications (an SDK), or from a local operator. Look for it in deployment and ingress config, then ask. Nearly every severity depends on the answer, so if it stays unconfirmed, say so in "System and Scope", make it the first open question, and write severity as conditions ("critical if reachable without Sentry in front of it") rather than fixed levels.
+**Settle exposure first.** Before drafting anything about severity, find out who can reach the system: from the internet, from other internal services only, from customer applications (an SDK), or from a local operator. Look for it in deployment and ingress config, then ask. Nearly every severity depends on the answer, so if it stays unconfirmed, say so in "System and Scope", make it the first open question, and give each severity a base level plus the conditions that raise or lower it ("high; critical if reachable without Sentry in front of it").
 
 Use the documentation from step 1 to find the controls the project intends, then confirm each one in code. Read the smallest useful set of files at the places security is usually enforced:
 
@@ -89,16 +89,16 @@ Establish what a reviewer needs to know:
 
 When reviewing existing guidance, compare it with that evidence. Call out stale exposure or ownership claims, missing or conflicting boundaries, exclusions broad enough to hide a real finding, accepted risks past their review date, and new surfaces revealed by routes, tests, or prior findings. For each gap give the evidence, how it would change review results, and the smallest useful correction.
 
-Confirm with the owner every decision that suppresses or downgrades findings: exclusions, accepted risks, "not reportable" classes, and severity lower than the default. Never turn an inference into suppression authority or treat an unverified control as proof that a finding is safe. If the owner is unavailable, mark the item `Unresolved` where it appears and add the question to the open-questions list you present alongside the draft. An unresolved exclusion does not suppress anything.
+Confirm with the owner every decision that suppresses or downgrades findings: exclusions, accepted risks, "not reportable" classes, and severity lower than a review tool would assign without the policy. Never turn an inference into suppression authority or treat an unverified control as proof that a finding is safe. If the owner is unavailable, mark the item `Unresolved` where it appears and add the question to the open-questions list you present alongside the draft. An unresolved exclusion does not suppress anything.
 
 **Ask the user, don't just list questions.** When the user is present, put open decisions to them as you reach them, rather than saving them for the end:
 
 1. Ask no more than three questions at once, starting with the ones whose answers would change the most findings. Exposure comes first.
 2. Use the agent's structured question tool when it has one, otherwise ask in plain text. Offer the likely answers as choices, with your proposal first, for example "Not reportable (proposed)", "Reportable", or "Not sure, leave unresolved".
-3. Ask once whether the user owns this code or can decide for its owners. Record an answer as owner-confirmed only if they can. Otherwise keep the item `Unresolved` and note the user's view next to the question.
+3. Right after the exposure question, ask once whether the user owns this code or can decide for its owners (CODEOWNERS shows who they are). Record an answer as owner-confirmed only if they can. Otherwise keep the item `Unresolved` and note the user's view next to the question.
 4. Update the draft from each answer, then ask the next batch. Stop when the user says to, or when only questions the user can't answer remain.
 
-Prefer plain questions: Which surfaces are internet-facing? Which inputs are attacker-controlled? Is this also shipped self-hosted? Are any finding classes intentionally out of scope? In a public repository, a question that hints at a possible weakness is still asked, but only in the conversation with the user.
+Prefer plain questions: Which surfaces are internet-facing? Which inputs are attacker-controlled? Is this also shipped self-hosted? Are any finding classes intentionally out of scope? In a public repository, a question that hints at a possible weakness is still asked, but only in the conversation with the user or in local working notes, never in anything committed or published.
 
 The policy describes how the system is meant to behave. Finding and judging vulnerabilities is the job of the review tools that read it. If while reading you see code that appears to break an invariant, mention it to the user, then write the invariant as intended. Do not record the suspected gap as a known limitation or accepted risk, because that would teach the review tools to ignore it.
 
@@ -111,7 +111,7 @@ Use the sections that help a reviewer decide what is and is not a finding. Drop 
 ```markdown
 # Security Model
 
-Owners: <team or CODEOWNERS group> · Last reviewed: <YYYY-MM-DD, or "draft" until an owner reviews it> · Applies to: this directory and below
+Last reviewed: <YYYY-MM-DD, or "draft" until an owner reviews it> · Applies to: this directory and below
 
 ## System and Scope
 
@@ -139,7 +139,7 @@ Retired: <INV-n, reason> (omit until a number is retired)
 ## Out of Scope, Exclusions, and Accepted Risk
 
 - <what is excluded, where> — <why>.
-- Accepted risk: <what, where> — <why>. Review by: <YYYY-MM-DD>. Owner: <only if not the file's owners>.
+- Accepted risk: <what, where> — <why>. Review by: <YYYY-MM-DD>.
 
 ## Known Limitations and Compensating Controls
 
@@ -155,9 +155,9 @@ Drafting rules:
 - **Stable IDs.** Number invariants `INV-n` and never reuse a retired number, so findings and child policies can cite them.
 - **Precedence.** The policy closest to the code adds context and wins on severity. It can narrow or relax a parent invariant or exclusion only through an entry under "Overrides of Parent Policy" that names the parent rule and gives the reason. Write unmarked conflicts as questions for the owner, not as silent overrides.
 - **Narrow exclusions.** Each exclusion names a finding class and a location. "Tests are out of scope" is fine; "low-severity issues are out of scope" or "internal endpoints are trusted" without naming them hides real findings. Accepted risks carry a review-by date.
-- **Owners.** Every entry inherits the owners in the header line. Name an owner on an entry only when it differs. If the header owner is unknown, write `Unresolved` once in the header and add it to the open questions, not on every entry. Use `Unresolved` only for decisions that are actually open.
+- **Ownership.** Do not record owners in the file; CODEOWNERS already says who approves changes. Use `Unresolved` only for decisions that are actually open.
 - **Open questions stay out of the file.** The committed policy keeps only the inline `Unresolved` markers, which tell review tools to use their defaults. Keep the questions themselves in a separate list. In a public repository, any question that hints at a possible weakness ("is this admin route reachable without a session?") goes to the user only, never into the file or a PR description.
-- **Enforcement points.** Name the symbol or file that enforces each invariant in backticks so `check` can catch it moving. Mark controls that only log or alert as "Monitored by", never as "Enforced by".
+- **Enforcement points.** Name the symbol or file that enforces each invariant in backticks so `check` can catch it moving. Mark controls that only log or alert as "Monitored by", never as "Enforced by". When an invariant is enforced on some paths only, name those paths and write "Enforced on <other path> by: unknown" for the rest. Do not put repository names or other non-code identifiers in backticks.
 - **Public repositories.** Many getsentry repositories are public; check with `gh repo view --json visibility` or ask, and assume public if unsure. Do not record unfixed, exploitable gaps, secrets, internal hostnames, customer data, or exploit detail. Describe an owner-confirmed gap at the level a reviewer needs ("rate limiting on X is enforced at the edge, not in this service"), and keep anything more specific in the private tracker.
 - **Existing review skills.** Link to repository review skills (for example `.agents/skills/<name>-security/`) rather than copying their pattern catalogs. Move the reportability decisions they contain (exclusions, "not a finding" rules) into this file so they have an owner. Where their claims about the code no longer match the code, list the drift for the user separately; it is not part of the policy.
 - Keep useful existing language and structure, and keep the file short enough to read alongside code; the resolver warns above 64 KiB.
