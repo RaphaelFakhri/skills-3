@@ -63,6 +63,7 @@ Works with Claude Code, Cursor, Cline, GitHub Copilot, and other compatible agen
 | [pr-writer](skills/pr-writer/SKILL.md) | Create, refresh, and rewrite pull request titles and descriptions following Sentry conventions. |
 | [prompt-optimizer](skills/prompt-optimizer/SKILL.md) | Optimize prompts with evals, model-family adapters, and exact external context references. |
 | [secret-serialization](skills/secret-serialization/SKILL.md) | Find secrets and tokens that leak through generated serialization such as dataclass repr, asdict, model_dump, JSON.stringify, logs, and tracing spans. |
+| [security-model](skills/security-model/SKILL.md) | Define and maintain SECURITY_MODEL.md files that tell security review tools a repository's trust boundaries, invariants, reportable finding classes, and exclusions. |
 | [security-review](skills/security-review/SKILL.md) | Security code review for vulnerabilities. |
 | [skill-scanner](skills/skill-scanner/SKILL.md) | Scan agent skills for security issues. |
 | [skill-writer](skills/skill-writer/SKILL.md) | Canonical workflow to synthesize, create, and iteratively improve agent skills for this repository. |
