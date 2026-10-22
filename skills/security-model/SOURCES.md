@@ -46,6 +46,8 @@ Runs on real repositories. Repository names, weaknesses, and drafted content are
 | Re-run of the same draft with `check` | One stale path copied from CODEOWNERS; no false positives. | None. |
 | Large public monorepo | Exposure settled from the repository, so severities were fixed levels. `check` gave false positives on package-relative paths and a symlinked skills directory, and found one stale symbol in an existing review skill. | Package-relative and symlink handling in `check`; run `check` on review-skill references. |
 | Review of committed open questions | Questions in the file would go stale and could hint at weaknesses. | Questions presented with the draft, never committed. |
+| Public Rust service with a separate docs site | The draft missed a shared cache across instances, retained minidumps, scraping headers, and several limits, because docs were found by filename only. The docs also disagreed with the code in three places. | Read project docs in full and confirm each documented control in code; report doc and code drift to the user. |
+| User feedback on question handling | Open questions reached the user as a list at the end instead of being asked. | Ask open decisions interactively as multiple-choice prompts, update the draft from answers, and confirm the user can decide for the owners. |
 
 ## Open Gaps
 
@@ -55,4 +57,5 @@ Runs on real repositories. Repository names, weaknesses, and drafted content are
 
 ## Changelog
 
+- Read project docs in full instead of searching by filename; ask open decisions interactively.
 - Initial version.
