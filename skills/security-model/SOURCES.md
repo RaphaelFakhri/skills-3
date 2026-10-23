@@ -58,6 +58,7 @@ Runs on real repositories. Repository names, weaknesses, and drafted content are
 
 ## Changelog
 
+- `resolve --ref` and `check` use the parent directories for a scope missing at that revision, so a file a PR adds still gets its base policy chain (found by review).
 - Stop recording owners in the policy; `check` validates qualified symbols; clarify severity and question wording.
 - Read project docs in full instead of searching by filename; ask open decisions interactively.
 - Initial version.

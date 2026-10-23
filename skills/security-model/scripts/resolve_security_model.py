@@ -203,16 +203,21 @@ class Source:
         return decode_policy(data, rel)
 
     def is_dir(self, rel: str) -> bool:
+        # A scope missing at this revision (a file the PR adds, or one it
+        # deletes) is treated as a file, so its parent directories still
+        # give the chain. A new directory has no policy of its own there.
         if self.ref:
             top, prefix = self.git  # type: ignore[misc]
             target = f"{self.ref}:{prefix}{rel}" if rel else f"{self.ref}:{prefix}"
             try:
                 return run_git(top, "cat-file", "-t", target).strip() == "tree"
             except PolicyError:
-                raise PolicyError(f"scope does not exist at {self.ref}: {rel}")
+                warn(f"{rel} does not exist at {self.ref}; using its parent directories")
+                return False
         path = self.repo / rel
         if not path.exists():
-            raise PolicyError(f"scope does not exist: {rel}")
+            warn(f"{rel} does not exist; using its parent directories")
+            return False
         return path.is_dir()
 
     def relative_scope(self, scope: str) -> str:

@@ -93,10 +93,24 @@ def test_ref_ignores_policy_added_in_diff(repo: Path) -> None:
 
 
 def test_ref_scope_for_new_file(repo: Path) -> None:
-    out = run("resolve", "--repo", str(repo), "--scope", "src/api/new_file.py", "--ref", "main")
-    assert out.returncode == 2  # parent exists but file does not at ref
+    # A file the PR adds does not exist at the base, but its base chain must still load.
+    (repo / "src/api/new_dir").mkdir()
+    (repo / "src/api/new_dir/SECURITY_MODEL.md").write_text("Everything here is out of scope.\n")
+    (repo / "src/api/new_dir/new_file.py").write_text("pass\n")
+    for scope in ("src/api/new_file.py", "src/api/new_dir/new_file.py", "src/api/new_dir"):
+        out = run("resolve", "--repo", str(repo), "--scope", scope, "--ref", "main")
+        assert out.returncode == 0, out.stderr
+        assert "Tenant isolation" in out.stdout and "API" in out.stdout
+        assert "out of scope" not in out.stdout
+        assert "does not exist at main" in out.stderr
     out = run("resolve", "--repo", str(repo), "--scope", "src/api", "--ref", "main")
     assert out.returncode == 0 and "API" in out.stdout
+
+
+def test_worktree_scope_for_deleted_file(repo: Path) -> None:
+    out = run("resolve", "--repo", str(repo), "--scope", "src/api/v1/deleted.py")
+    assert out.returncode == 0 and "API" in out.stdout and "Root" in out.stdout
+    assert "does not exist" in out.stderr
 
 
 def test_component_subdir_repo(repo: Path) -> None:
