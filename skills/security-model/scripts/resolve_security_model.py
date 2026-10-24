@@ -338,7 +338,13 @@ class Source:
         if token.startswith("/"):
             return "literal", self._text_contains(token, word=False)
         if "/" in token or _FILE_EXT.search(token):
-            candidates = [token] if base in {"", "."} else [token, f"{base}/{token}"]
+            # `./x` and `../x` name one location relative to the policy, so
+            # they skip the root-relative and trailing-segment matches.
+            anchored = token.startswith(("./", "../"))
+            if base in {"", "."}:
+                candidates = [token]
+            else:
+                candidates = [f"{base}/{token}"] if anchored else [token, f"{base}/{token}"]
             # Authors often write paths relative to a package root
             # (`api/authentication.py` for `src/sentry/api/authentication.py`),
             # so a match on the trailing path segments also counts.
@@ -347,10 +353,15 @@ class Source:
                 # revision too, not only through the worktree fallback.
                 cand = posixpath.normpath(cand.rstrip("/"))
                 if any(ch in cand for ch in "*?["):
-                    if any(fnmatch.fnmatchcase(f, cand) or fnmatch.fnmatchcase(f, f"*/{cand}") for f in file_set):
+                    if any(
+                        fnmatch.fnmatchcase(f, cand) or (not anchored and fnmatch.fnmatchcase(f, f"*/{cand}"))
+                        for f in file_set
+                    ):
                         return "path", True
                 elif any(
-                    f == cand or f.startswith(cand + "/") or f.endswith("/" + cand) or f"/{cand}/" in f
+                    f == cand
+                    or f.startswith(cand + "/")
+                    or (not anchored and (f.endswith("/" + cand) or f"/{cand}/" in f))
                     for f in file_set
                 ):
                     return "path", True
